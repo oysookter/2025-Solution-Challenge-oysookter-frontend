@@ -93,6 +93,7 @@ class _MapWidgetState extends State<MapWidget> {
   Widget build(BuildContext context) {
     return GoogleMap(
       onMapCreated: _onMapCreated,
+      mapType: MapType.satellite, // 위성 사진 모드로 설정
       initialCameraPosition: CameraPosition(
         target: LatLng(35.907757, 127.766922), // 남한의 중심점
         zoom: 20, // 줌 레벨을 15.0에서 7.5로 수정
