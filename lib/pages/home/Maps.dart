@@ -13,6 +13,8 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   late GoogleMapController mapController;
   final Set<Marker> _markers = {};
+  final Set<Circle> _circles = {};
+  final Set<GroundOverlay> _groundOverlays = {};
 
   // 남한의 위도/경도 경계
   static final LatLngBounds southKoreaBounds = LatLngBounds(
@@ -28,28 +30,82 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   void _handleTap(LatLng tappedPoint) async {
+    final markerId = MarkerId(tappedPoint.toString());
+
+    // 주소 정보 받아오기
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      tappedPoint.latitude,
+      tappedPoint.longitude,
+      localeIdentifier: 'ko_KR',
+    );
+
+    String? province;
+    String? city;
+    if (placemarks.isNotEmpty) {
+      province = placemarks.first.administrativeArea; // ex) '경기도'
+      city = placemarks.first.locality; // ex) '수원시'
+    }
+
     setState(() {
       _markers.clear();
+      _circles.clear();
+
       _markers.add(
         Marker(
-          markerId: MarkerId(tappedPoint.toString()),
+          markerId: markerId,
           position: tappedPoint,
           infoWindow: InfoWindow(
             title: '선택한 위치',
-            snippet:
-                '위도: ${tappedPoint.latitude}, 경도: ${tappedPoint.longitude}',
+            snippet: ((province ?? '') +
+                (city != null ? ' ' + city : '')), // 도와 시 함께 출력
           ),
+        ),
+      );
+
+      // 10km 반경의 원 추가
+      _circles.add(
+        Circle(
+          circleId: CircleId('radius_circle'),
+          center: tappedPoint,
+          radius: 10000, // 10km in meters
+          fillColor: Colors.transparent,
+          strokeColor: Color(0xFFCF5445),
+          strokeWidth: 3,
+        ),
+      );
+
+      // 원 내부
+      _circles.add(
+        Circle(
+          circleId: CircleId('outer_circle'),
+          center: tappedPoint,
+          radius: 25000, // 25km 반경과 동일하게 설정
+          //fillColor: Colors.grey.withOpacity(0.7),
+          strokeWidth: 0,
         ),
       );
     });
 
-    try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        tappedPoint.latitude,
-        tappedPoint.longitude,
-        localeIdentifier: 'ko_KR',
-      );
+    // 마커 InfoWindow를 바로 띄우기
+    await Future.delayed(Duration(milliseconds: 100));
+    mapController.showMarkerInfoWindow(markerId);
 
+    // 1. 카메라를 클릭한 위치로 이동 및 확대
+    await mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: tappedPoint,
+          zoom: 7.25,
+        ),
+      ),
+    );
+
+    // 2. 마커가 지도 상단에 오도록 지도 스크롤
+    await mapController.moveCamera(
+      CameraUpdate.scrollBy(0, 30), // -150~ -200 등으로 조정
+    );
+
+    try {
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks.first;
         String address =
@@ -93,17 +149,17 @@ class _MapWidgetState extends State<MapWidget> {
   Widget build(BuildContext context) {
     return GoogleMap(
       onMapCreated: _onMapCreated,
-      mapType: MapType.satellite, // 위성 사진 모드로 설정
+      mapType: MapType.satellite,
       initialCameraPosition: CameraPosition(
-        target: LatLng(35.907757, 127.766922), // 남한의 중심점
-        zoom: 20, // 줌 레벨을 15.0에서 7.5로 수정
+        target: LatLng(35.907757, 127.766922),
+        zoom: 20,
       ),
       markers: _markers,
+      circles: _circles,
       onTap: _handleTap,
       zoomControlsEnabled: true,
       minMaxZoomPreference: MinMaxZoomPreference(6.0, 18.0),
-      cameraTargetBounds:
-          CameraTargetBounds(southKoreaBounds), // 카메라 이동 범위를 남한으로 제한
+      cameraTargetBounds: CameraTargetBounds(southKoreaBounds),
     );
   }
 }
