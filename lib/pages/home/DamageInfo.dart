@@ -56,8 +56,7 @@ class DamageInfo extends StatelessWidget {
               child: Text(
                 value,
                 style: TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 26.0,
                   color: Colors.black,
                 ),
                 textAlign: TextAlign.center,

@@ -33,7 +33,7 @@ class MyPage extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.asset(
-                          'assets/potato.jpeg',
+                          'assets/img/potato.jpeg',
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
@@ -111,9 +111,9 @@ class MyPage extends StatelessWidget {
     return ListTile(
       title: Text(
         title,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        style: TextStyle(fontSize: 20),
       ),
-      trailing: Icon(Icons.chevron_right, size: 28, color: Colors.black87),
+      trailing: Icon(Icons.chevron_right, size: 24, color: Colors.black87),
       onTap: () {},
       contentPadding: EdgeInsets.symmetric(horizontal: 8),
       minLeadingWidth: 0,

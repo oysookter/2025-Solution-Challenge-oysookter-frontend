@@ -102,7 +102,7 @@ class _MapWidgetState extends State<MapWidget> {
 
     // 2. 마커가 지도 상단에 오도록 지도 스크롤
     await mapController.moveCamera(
-      CameraUpdate.scrollBy(0, 30), // -150~ -200 등으로 조정
+      CameraUpdate.scrollBy(0, 50), // -150~ -200 등으로 조정
     );
 
     try {
