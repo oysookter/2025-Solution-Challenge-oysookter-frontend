@@ -19,26 +19,6 @@ class PlantInfo extends StatelessWidget {
       'image': 'assets/img/niceday.jpeg',
       'description': 'AI 설명 요약 ~~~~~~~~'
     },
-    {
-      'name': '소나무',
-      'image': 'assets/img/duck.jpeg',
-      'description': 'AI 설명 요약 ~~~~~~~~'
-    },
-    {
-      'name': '소나무',
-      'image': 'assets/img/niceday.jpeg',
-      'description': 'AI 설명 요약 ~~~~~~~~'
-    },
-    {
-      'name': '소나무',
-      'image': 'assets/img/potato.jpeg',
-      'description': 'AI 설명 요약 ~~~~~~~~'
-    },
-    {
-      'name': '소나무',
-      'image': 'assets/img/niceday.jpeg',
-      'description': 'AI 설명 요약 ~~~~~~~~'
-    },
   ];
 
   @override
