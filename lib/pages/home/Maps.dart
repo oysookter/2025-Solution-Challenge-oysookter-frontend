@@ -4,6 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 
 class MapWidget extends StatefulWidget {
   @override
@@ -16,6 +18,8 @@ class _MapWidgetState extends State<MapWidget> {
   final Set<Circle> _circles = {};
   final Set<GroundOverlay> _groundOverlays = {};
 
+  double _currentZoom = 7.0; // 현재 줌 상태 저장
+
   // 남한의 위도/경도 경계
   static final LatLngBounds southKoreaBounds = LatLngBounds(
     southwest: LatLng(33.0, 125.0), // 남한의 남서쪽 끝점
@@ -27,6 +31,12 @@ class _MapWidgetState extends State<MapWidget> {
     // 지도가 생성되면 남한 영역으로 카메라 이동
     controller
         .animateCamera(CameraUpdate.newLatLngBounds(southKoreaBounds, 50.0));
+    // 초기 줌 값 저장
+    mapController.getZoomLevel().then((zoom) {
+      setState(() {
+        _currentZoom = zoom;
+      });
+    });
   }
 
   void _handleTap(LatLng tappedPoint) async {
@@ -41,9 +51,16 @@ class _MapWidgetState extends State<MapWidget> {
 
     String? province;
     String? city;
+    String? subLocality;
+    String? thoroughfare;
+    String? name;
     if (placemarks.isNotEmpty) {
-      province = placemarks.first.administrativeArea; // ex) '경기도'
-      city = placemarks.first.locality; // ex) '수원시'
+      Placemark place = placemarks.first;
+      province = place.administrativeArea; // ex) '경기도'
+      city = place.locality; // ex) '수원시'
+      subLocality = place.subLocality; // ex) '영통구'
+      thoroughfare = place.thoroughfare; // ex) '영통로'
+      name = place.name; // ex) '123번길'
     }
 
     setState(() {
@@ -56,8 +73,9 @@ class _MapWidgetState extends State<MapWidget> {
           position: tappedPoint,
           infoWindow: InfoWindow(
             title: '선택한 위치',
-            snippet: ((province ?? '') +
-                (city != null ? ' ' + city : '')), // 도와 시 함께 출력
+            snippet: [province, city, subLocality, thoroughfare, name]
+                .where((s) => s != null && s.isNotEmpty)
+                .join(' '),
           ),
         ),
       );
@@ -95,15 +113,15 @@ class _MapWidgetState extends State<MapWidget> {
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: tappedPoint,
-          zoom: 7.25,
+          zoom: _currentZoom, // 마지막 줌 상태 유지
         ),
       ),
     );
 
-    // 2. 마커가 지도 상단에 오도록 지도 스크롤
-    await mapController.moveCamera(
-      CameraUpdate.scrollBy(0, 50), // -150~ -200 등으로 조정
-    );
+    // // 2. 마커가 지도 상단에 오도록 지도 스크롤
+    // await mapController.moveCamera(
+    //   CameraUpdate.scrollBy(0, 100), // -150~ -200 등으로 조정
+    // );
 
     try {
       if (placemarks.isNotEmpty) {
@@ -152,14 +170,23 @@ class _MapWidgetState extends State<MapWidget> {
       mapType: MapType.satellite,
       initialCameraPosition: CameraPosition(
         target: LatLng(35.907757, 127.766922),
-        zoom: 20,
+        zoom: 7.0, // 초기 줌 레벨을 7.0으로 조정
       ),
       markers: _markers,
       circles: _circles,
       onTap: _handleTap,
       zoomControlsEnabled: true,
-      minMaxZoomPreference: MinMaxZoomPreference(6.0, 18.0),
+      zoomGesturesEnabled: true,
+      minMaxZoomPreference: MinMaxZoomPreference(5.0, 18.0), // 줌 범위 조정
       cameraTargetBounds: CameraTargetBounds(southKoreaBounds),
+      scrollGesturesEnabled: true,
+      tiltGesturesEnabled: true,
+      rotateGesturesEnabled: true,
+      myLocationEnabled: true, // 현재 위치 표시 활성화
+      myLocationButtonEnabled: true, // 현재 위치 버튼 활성화
+      onCameraMove: (CameraPosition position) {
+        _currentZoom = position.zoom;
+      },
     );
   }
 }
