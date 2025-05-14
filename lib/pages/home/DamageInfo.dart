@@ -1,15 +1,41 @@
 import 'package:flutter/material.dart';
+import '../../models/summary_response.dart';
 
 class DamageInfo extends StatelessWidget {
+  final SummaryResponse? summaryData;
+
+  const DamageInfo({Key? key, this.summaryData}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    if (summaryData == null) {
+      return Container(
+        height: 120,
+        child: Center(
+          child: Text(
+            '피해 정보를 불러오는 중입니다...',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildInfoBox('Extent of damage', '35%'),
-          _buildInfoBox('Estimated recovery rate', '20%'),
+          _buildInfoBox(
+            'Extent of damage',
+            '${summaryData!.damage.toStringAsFixed(1)}%',
+          ),
+          _buildInfoBox(
+            'Estimated recovery rate',
+            '${summaryData!.recoveryInfo.recovery.recoveryRate.toStringAsFixed(1)}%',
+          ),
         ],
       ),
     );

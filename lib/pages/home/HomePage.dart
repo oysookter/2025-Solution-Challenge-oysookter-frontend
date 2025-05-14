@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'Maps.dart';
 import 'DamageInfo.dart';
 import 'PlantInfo.dart';
+import '../../services/api_service.dart';
+import '../../models/summary_response.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,6 +15,30 @@ class _HomePageState extends State<HomePage> {
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
   double _sheetSize = 0.5;
+  final ApiService _apiService = ApiService();
+  SummaryResponse? _summaryData;
+  bool _isLoading = false;
+
+  Future<void> _fetchSummaryData(double lat, double lon) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final summaryData = await _apiService.getSummary(lat, lon);
+      setState(() {
+        _summaryData = summaryData;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('데이터를 불러오는데 실패했습니다: $e')),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -35,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          MapWidget(),
+          MapWidget(onLocationSelected: _fetchSummaryData),
           DraggableScrollableSheet(
             controller: _sheetController,
             initialChildSize: 0.5,
@@ -47,28 +73,46 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 ),
-                child: ListView(
-                  controller: scrollController,
-                  children: [
-                    SizedBox(height: 12),
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFCF5445),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
+                child: _isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView(
+                        controller: scrollController,
+                        children: [
+                          SizedBox(height: 12),
+                          Center(
+                            child: Container(
+                              width: 40,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFCF5445),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                            ),
+                          ),
+                          if (_summaryData == null)
+                            Container(
+                              height: 300,
+                              child: Center(
+                                child: Text(
+                                  '확인하고 싶은 지도의 위치를 선택하세요.',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            )
+                          else ...[
+                            DamageInfo(summaryData: _summaryData),
+                            SizedBox(height: 10),
+                            Container(
+                              height: 450,
+                              child: PlantInfo(summaryData: _summaryData),
+                            ),
+                          ],
+                        ],
                       ),
-                    ),
-                    DamageInfo(),
-                    SizedBox(height: 10),
-                    Container(
-                      height: 450,
-                      child: PlantInfo(),
-                    ),
-                  ],
-                ),
               );
             },
           ),

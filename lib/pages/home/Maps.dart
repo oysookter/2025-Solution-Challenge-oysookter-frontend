@@ -8,6 +8,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/foundation.dart';
 
 class MapWidget extends StatefulWidget {
+  final Function(double, double) onLocationSelected;
+
+  const MapWidget({Key? key, required this.onLocationSelected})
+      : super(key: key);
+
   @override
   _MapWidgetState createState() => _MapWidgetState();
 }
@@ -46,7 +51,7 @@ class _MapWidgetState extends State<MapWidget> {
     List<Placemark> placemarks = await placemarkFromCoordinates(
       tappedPoint.latitude,
       tappedPoint.longitude,
-      localeIdentifier: 'ko_KR',
+      localeIdentifier: 'en_US',
     );
 
     String? province;
@@ -59,8 +64,6 @@ class _MapWidgetState extends State<MapWidget> {
       province = place.administrativeArea; // ex) '경기도'
       city = place.locality; // ex) '수원시'
       subLocality = place.subLocality; // ex) '영통구'
-      thoroughfare = place.thoroughfare; // ex) '영통로'
-      name = place.name; // ex) '123번길'
     }
 
     setState(() {
@@ -72,8 +75,8 @@ class _MapWidgetState extends State<MapWidget> {
           markerId: markerId,
           position: tappedPoint,
           infoWindow: InfoWindow(
-            title: '선택한 위치',
-            snippet: [province, city, subLocality, thoroughfare, name]
+            title: 'Selected region',
+            snippet: [province, city, subLocality]
                 .where((s) => s != null && s.isNotEmpty)
                 .join(' '),
           ),
@@ -118,29 +121,11 @@ class _MapWidgetState extends State<MapWidget> {
       ),
     );
 
-    // // 2. 마커가 지도 상단에 오도록 지도 스크롤
-    // await mapController.moveCamera(
-    //   CameraUpdate.scrollBy(0, 100), // -150~ -200 등으로 조정
-    // );
-
-    try {
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks.first;
-        String address =
-            '${place.country ?? ''} ${place.administrativeArea ?? ''} ${place.locality ?? ''} ${place.subLocality ?? ''} ${place.thoroughfare ?? ''} ${place.name ?? ''}';
-        print('변환된 주소: $address');
-        _sendLocationDataToBackend(
-            tappedPoint.latitude, tappedPoint.longitude, address);
-      } else {
-        print('주소를 찾을 수 없습니다.');
-        _sendLocationDataToBackend(
-            tappedPoint.latitude, tappedPoint.longitude, '');
-      }
-    } catch (e) {
-      print('Geocoding 에러: $e');
-      _sendLocationDataToBackend(
-          tappedPoint.latitude, tappedPoint.longitude, '');
-    }
+    // API 호출
+    widget.onLocationSelected(
+      tappedPoint.latitude.truncateToDouble(),
+      tappedPoint.longitude.truncateToDouble(),
+    );
   }
 
   Future<void> _sendLocationDataToBackend(
@@ -155,12 +140,6 @@ class _MapWidgetState extends State<MapWidget> {
         'address': address,
       }),
     );
-
-    if (response.statusCode == 200) {
-      print('위치 정보 (좌표 및 주소)가 백엔드에 성공적으로 전송되었습니다.');
-    } else {
-      print('위치 정보 전송 실패: ${response.statusCode}');
-    }
   }
 
   @override
