@@ -46,10 +46,10 @@ class DamageInfo extends StatelessWidget {
       width: 160,
       height: 120,
       decoration: BoxDecoration(
-        color: Color(0xFFFFF3F3), // 연한 분홍 배경
+        color: Color(0xFFFFF3F3),
         borderRadius: BorderRadius.circular(18.0),
         border: Border.all(
-          color: Color(0xFFB85C4C), // 진한 분홍 테두리
+          color: Color(0xFFB85C4C),
           width: 3.0,
         ),
       ),
@@ -75,7 +75,7 @@ class DamageInfo extends StatelessWidget {
           Container(
             margin: EdgeInsets.symmetric(horizontal: 8),
             height: 2,
-            color: Color(0xFFB85C4C), // 구분선
+            color: Color(0xFFB85C4C),
           ),
           Expanded(
             child: Center(

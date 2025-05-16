@@ -1,4 +1,3 @@
-// HomePage.dart
 import 'package:flutter/material.dart';
 import 'Maps.dart';
 import 'DamageInfo.dart';

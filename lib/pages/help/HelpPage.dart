@@ -14,7 +14,6 @@ class HelpPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Pedometer Title
               const SizedBox(height: 16),
               const Text(
                 'Pedometer',
@@ -24,7 +23,6 @@ class HelpPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              // Pedometer Card
               Container(
                 width: double.infinity,
                 padding:
@@ -110,7 +108,6 @@ class HelpPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              // Donation Title
               const Text(
                 'Donation',
                 style: TextStyle(
@@ -119,7 +116,6 @@ class HelpPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              // Donation Card 1
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 12),
@@ -134,7 +130,6 @@ class HelpPage extends StatelessWidget {
                   style: TextStyle(fontSize: 15),
                 ),
               ),
-              // Donation Card 2
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
@@ -148,7 +143,6 @@ class HelpPage extends StatelessWidget {
                   style: TextStyle(fontSize: 15),
                 ),
               ),
-              // Donation Card 3
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(top: 12),
@@ -164,7 +158,6 @@ class HelpPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              // Join us Title
               const Text(
                 'Join us',
                 style: TextStyle(
@@ -173,7 +166,6 @@ class HelpPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              // 카드 리스트
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),

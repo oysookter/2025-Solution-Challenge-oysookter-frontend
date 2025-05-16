@@ -17,7 +17,6 @@ class SummaryResponse {
 
   factory SummaryResponse.fromJson(Map<String, dynamic> json) {
     try {
-      // 한글 인코딩 문제 해결을 위해 문자열 데이터 디코딩
       String decodeKorean(String? text) {
         if (text == null) return '';
         try {
@@ -27,7 +26,6 @@ class SummaryResponse {
         }
       }
 
-      // recovery status 디코딩
       final recoveryJson =
           json['recoveryInfo']['recovery'] as Map<String, dynamic>;
       final decodedStatus = decodeKorean(recoveryJson['status'] as String?);
@@ -36,13 +34,11 @@ class SummaryResponse {
         'status': decodedStatus,
       };
 
-      // vegetation explanation 디코딩
       final vegetationJson =
           json['vegetationInfo']['vegetation'] as Map<String, dynamic>;
       final decodedExplanation =
           decodeKorean(vegetationJson['explanation'] as String?);
 
-      // veg1, veg2, veg3의 name과 text 디코딩
       final decodedVeg1 = {
         ...vegetationJson['veg1'] as Map<String, dynamic>,
         'name': decodeKorean(vegetationJson['veg1']['name'] as String?),

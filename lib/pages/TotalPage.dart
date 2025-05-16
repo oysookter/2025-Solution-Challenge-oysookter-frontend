@@ -9,7 +9,7 @@ class TotalPage extends StatefulWidget {
 }
 
 class _TotalPageState extends State<TotalPage> {
-  int _selectedIndex = 1; // 초기 선택 인덱스 (Home)
+  int _selectedIndex = 1;
 
   final List<Widget> _pages = [
     HelpPage(),
