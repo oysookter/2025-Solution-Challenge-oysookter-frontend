@@ -92,14 +92,17 @@ class _HomePageState extends State<HomePage> {
                           if (_summaryData == null)
                             Container(
                               height: 300,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 24.0, vertical: 16.0),
                               child: Center(
                                 child: Text(
-                                  '확인하고 싶은 지도의 위치를 선택하세요.',
+                                  'Point a spot where you want to check the status',
                                   style: TextStyle(
                                     fontSize: 22,
                                     color: Colors.grey[600],
                                     fontWeight: FontWeight.w500,
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             )
