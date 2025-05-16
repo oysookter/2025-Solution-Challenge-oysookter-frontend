@@ -33,7 +33,7 @@ class MyPage extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.asset(
-                          'assets/img/potato.jpeg',
+                          'assets/img/profile.jpg',
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
