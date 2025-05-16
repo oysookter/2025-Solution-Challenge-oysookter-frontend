@@ -16,7 +16,6 @@ class SummaryResponse {
   });
 
   factory SummaryResponse.fromJson(Map<String, dynamic> json) {
-    print('SummaryResponse 원본 JSON: $json');
     try {
       // 한글 인코딩 문제 해결을 위해 문자열 데이터 디코딩
       String decodeKorean(String? text) {
@@ -24,7 +23,6 @@ class SummaryResponse {
         try {
           return utf8.decode(text.codeUnits);
         } catch (e) {
-          print('문자열 디코딩 실패: $e');
           return text;
         }
       }
@@ -79,8 +77,6 @@ class SummaryResponse {
             json['vegetationInfo'] as Map<String, dynamic>),
       );
     } catch (e) {
-      print('SummaryResponse 파싱 오류: $e');
-      print('문제가 된 JSON 데이터: $json');
       rethrow;
     }
   }
@@ -92,13 +88,11 @@ class RecoveryInfo {
   RecoveryInfo({required this.recovery});
 
   factory RecoveryInfo.fromJson(Map<String, dynamic> json) {
-    print('RecoveryInfo.fromJson 시작: $json');
     try {
       return RecoveryInfo(
         recovery: Recovery.fromJson(json['recovery'] as Map<String, dynamic>),
       );
     } catch (e) {
-      print('RecoveryInfo 파싱 오류: $e');
       rethrow;
     }
   }
@@ -120,7 +114,6 @@ class Recovery {
   });
 
   factory Recovery.fromJson(Map<String, dynamic> json) {
-    print('Recovery.fromJson 시작: $json');
     try {
       return Recovery(
         ndviPre: (json['ndvi_pre'] as num).toDouble(),
@@ -130,7 +123,6 @@ class Recovery {
         status: json['status'] as String,
       );
     } catch (e) {
-      ('Recovery 파싱 오류: $e');
       rethrow;
     }
   }
@@ -146,7 +138,6 @@ class VegetationInfo {
   });
 
   factory VegetationInfo.fromJson(Map<String, dynamic> json) {
-    print('VegetationInfo.fromJson 시작: $json');
     try {
       return VegetationInfo(
         ndvi: (json['ndvi'] as num).toDouble(),
@@ -154,7 +145,6 @@ class VegetationInfo {
             Vegetation.fromJson(json['vegetation'] as Map<String, dynamic>),
       );
     } catch (e) {
-      print('VegetationInfo 파싱 오류: $e');
       rethrow;
     }
   }
@@ -174,7 +164,6 @@ class Vegetation {
   });
 
   factory Vegetation.fromJson(Map<String, dynamic> json) {
-    print('Vegetation 원본 JSON: $json');
     try {
       return Vegetation(
         explanation: json['explanation'] as String,
@@ -183,7 +172,6 @@ class Vegetation {
         veg3: PlantData.fromJson(json['veg3'] as Map<String, dynamic>),
       );
     } catch (e) {
-      print('Vegetation 파싱 오류: $e');
       rethrow;
     }
   }
@@ -201,9 +189,6 @@ class PlantData {
   });
 
   factory PlantData.fromJson(Map<String, dynamic> json) {
-    print('PlantData 원본 JSON: $json');
-    print('PlantData image URL 원본: ${json['image']}');
-
     return PlantData(
       name: json['name'] as String,
       text: json['text'] as String,
