@@ -44,27 +44,34 @@ class _MapWidgetState extends State<MapWidget> {
     });
   }
 
+  Future<String> _getEnglishAddress(double lat, double lng) async {
+    final apiKey = 'AIzaSyC8FQqrlc8qU6FH4_dc5Vk9sQxM-RV3Gis';
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&language=en&key=$apiKey');
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['results'] != null && data['results'].isNotEmpty) {
+          // 첫 번째 결과의 formatted_address 사용
+          return data['results'][0]['formatted_address'];
+        }
+      }
+      return 'Address not found';
+    } catch (e) {
+      return 'Error getting address';
+    }
+  }
+
   void _handleTap(LatLng tappedPoint) async {
     final markerId = MarkerId(tappedPoint.toString());
 
-    // 주소 정보 받아오기
-    List<Placemark> placemarks = await placemarkFromCoordinates(
+    // 영어 주소 가져오기
+    final englishAddress = await _getEnglishAddress(
       tappedPoint.latitude,
       tappedPoint.longitude,
-      localeIdentifier: 'en_US',
     );
-
-    String? province;
-    String? city;
-    String? subLocality;
-    String? thoroughfare;
-    String? name;
-    if (placemarks.isNotEmpty) {
-      Placemark place = placemarks.first;
-      province = place.administrativeArea; // ex) '경기도'
-      city = place.locality; // ex) '수원시'
-      subLocality = place.subLocality; // ex) '영통구'
-    }
 
     setState(() {
       _markers.clear();
@@ -75,10 +82,8 @@ class _MapWidgetState extends State<MapWidget> {
           markerId: markerId,
           position: tappedPoint,
           infoWindow: InfoWindow(
-            title: 'Selected region',
-            snippet: [province, city, subLocality]
-                .where((s) => s != null && s.isNotEmpty)
-                .join(' '),
+            title: 'Selected Location',
+            snippet: englishAddress,
           ),
         ),
       );
