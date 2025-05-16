@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
           MapWidget(onLocationSelected: _fetchSummaryData),
           DraggableScrollableSheet(
             controller: _sheetController,
-            initialChildSize: 0.5,
+            initialChildSize: 0.4,
             minChildSize: 0.1,
             maxChildSize: 0.95,
             builder: (context, scrollController) {
