@@ -12,7 +12,6 @@ class PlantInfo extends StatelessWidget {
       // URL 디코딩 시도
       return Uri.decodeFull(url);
     } catch (e) {
-      print('URL 디코딩 실패: $e');
       return url;
     }
   }
@@ -71,8 +70,6 @@ class PlantInfo extends StatelessWidget {
           final plant = plants[index];
           final decodedImageUrl =
               plant.image != null ? _decodeImageUrl(plant.image!) : null;
-          // print('식물 ${index + 1} 원본 URL: ${plant.image}');
-          // print('식물 ${index + 1} 디코딩된 URL: $decodedImageUrl');
 
           return Container(
             margin: EdgeInsets.only(
@@ -124,8 +121,6 @@ class PlantInfo extends StatelessWidget {
                               );
                             },
                             errorBuilder: (context, error, stackTrace) {
-                              print('이미지 로드 에러: $error');
-                              print('에러 발생 URL: $decodedImageUrl');
                               return _buildDefaultImage();
                             },
                           )
@@ -172,7 +167,6 @@ class PlantInfo extends StatelessWidget {
         'assets/img/tree.jpg',
         fit: BoxFit.fill,
         errorBuilder: (context, error, stackTrace) {
-          print('기본 이미지 로드 에러: $error');
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
